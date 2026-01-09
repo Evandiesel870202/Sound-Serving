@@ -1,0 +1,5 @@
+{
+  "name": "CRC Sound Department Admin",
+  "description": "A comprehensive administration system for the CRC Sound Department, managing volunteer registrations, availability, attendance, and rosters with a Google Sheets backend.",
+  "requestFramePermissions": []
+}
