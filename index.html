@@ -5,18 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRC Sound Department Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+      :root {
+        --brand-black: #000000;
+        --brand-dark: #111111;
+        --brand-light: #F5F5F5;
+        --brand-accent: #000000;
+        --brand-white: #FFFFFF;
+      }
+    </style>
     <script>
+      // Load saved theme from localStorage immediately to prevent flash of unstyled content
+      const savedTheme = localStorage.getItem('crc_custom_theme');
+      if (savedTheme) {
+        const theme = JSON.parse(savedTheme);
+        Object.keys(theme).forEach(key => {
+          document.documentElement.style.setProperty(key, theme[key]);
+        });
+      }
+
       tailwind.config = {
         theme: {
           extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
             colors: {
               brand: {
-                black: '#000000',
-                dark: '#2E2E2E',
-                light: '#D9D9D9',
-                white: '#FFFFFF'
+                black: 'var(--brand-black)',
+                dark: 'var(--brand-dark)',
+                light: 'var(--brand-light)',
+                gray: 'var(--brand-light)', // Compatibility for older references
+                accent: 'var(--brand-accent)',
+                white: 'var(--brand-white)'
               }
             }
           }
@@ -30,12 +57,13 @@
     "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "recharts": "https://esm.sh/recharts@^3.6.0"
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "xlsx": "https://esm.sh/xlsx@0.18.5"
   }
 }
 </script>
 </head>
-<body class="bg-gray-50 text-brand-black">
+<body class="bg-[#FBFBFB] text-black selection:bg-brand-accent selection:text-white">
     <div id="root"></div>
 </body>
 </html>

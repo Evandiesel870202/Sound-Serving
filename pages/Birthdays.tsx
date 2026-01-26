@@ -3,13 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../App';
 import { googleSheetService } from '../services/googleSheetService';
 import { User, City } from '../types';
-import { CITIES } from '../constants';
+import { CITY_FILTERS } from '../constants';
 
 const BirthdaysPage: React.FC = () => {
   const { currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCity, setSelectedCity] = useState<City>(currentUser?.city || 'JHB');
+  
+  // Added type assertion to allow comparison between 'City' and 'ALL' string
+  const canSeeAll = currentUser?.role === 'Super Admin' || (currentUser?.city as string) === 'ALL';
+  const [selectedCity, setSelectedCity] = useState<City | 'ALL'>(canSeeAll ? 'ALL' : (currentUser?.city || 'JHB'));
 
   const today = new Date();
   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
@@ -26,9 +29,12 @@ const BirthdaysPage: React.FC = () => {
     setLoading(false);
   };
 
-  const cityFiltered = users.filter(u => 
-    currentUser?.role === 'Super Admin' ? u.city === selectedCity : u.city === currentUser?.city
-  );
+  const cityFiltered = users.filter(u => {
+    if (canSeeAll) {
+      return selectedCity === 'ALL' ? true : u.city === selectedCity;
+    }
+    return u.city === currentUser?.city;
+  });
 
   const monthBirthdays = cityFiltered.filter(u => {
     if (!u.date_of_birth) return false;
@@ -43,17 +49,20 @@ const BirthdaysPage: React.FC = () => {
        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-brand-black">Birthday Calendar</h1>
-          <p className="text-gray-500">Upcoming birthdays for <strong>{nextMonthName}</strong>.</p>
+          <p className="text-gray-500">Upcoming birthdays for <strong>{nextMonthName}</strong> {selectedCity === 'ALL' ? 'across all campuses' : `at ${selectedCity}`}.</p>
         </div>
         
-        {currentUser?.role === 'Super Admin' && (
-          <select 
-            className="border border-brand-light rounded p-2 bg-white"
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value as City)}
-          >
-            {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+        {canSeeAll && (
+           <div className="flex items-center space-x-2">
+            <span className="text-xs font-bold uppercase text-gray-400">Campus Filter</span>
+            <select 
+              className="border border-brand-light rounded p-2 bg-white font-bold"
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value as City | 'ALL')}
+            >
+              {CITY_FILTERS.map(c => <option key={c} value={c}>{c === 'ALL' ? 'ALL CITIES' : c}</option>)}
+            </select>
+          </div>
         )}
       </div>
 
@@ -66,6 +75,7 @@ const BirthdaysPage: React.FC = () => {
                 {dob.getDate()}
               </div>
               <h4 className="font-bold text-lg">{u.name} {u.surname}</h4>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{u.city}</p>
               <p className="text-sm text-gray-500 mb-1">{u.main_station}</p>
               <div className="mt-4 pt-4 border-t border-brand-light w-full">
                 <p className="text-xs font-bold text-gray-400 uppercase">Cellphone</p>
@@ -76,7 +86,7 @@ const BirthdaysPage: React.FC = () => {
         })}
         {monthBirthdays.length === 0 && (
           <div className="col-span-full py-20 text-center text-gray-400 italic">
-            No birthdays found for {nextMonthName} in {selectedCity}.
+            No birthdays found for {nextMonthName} {selectedCity === 'ALL' ? 'in any campus' : `in ${selectedCity}`}.
           </div>
         )}
       </div>
