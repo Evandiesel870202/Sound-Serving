@@ -38,6 +38,30 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+// --- COMPONENT: LOGO ---
+const CRCLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
+  const sizes = {
+    sm: 'w-8 h-8 text-[10px] border-2',
+    md: 'w-16 h-16 text-xl border-4',
+    lg: 'w-32 h-32 text-4xl border-[6px]'
+  };
+
+  return (
+    <div className={`${sizes[size]} rounded-full bg-gradient-to-br from-[#E11D48] to-[#881337] border-white flex items-center justify-center shadow-xl mb-4 mx-auto shrink-0 overflow-hidden relative`}>
+      {/* Subtle wavy pattern overlay to match the image background */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <path d="M0 20 Q 25 10, 50 20 T 100 20" stroke="white" fill="transparent" strokeWidth="2" />
+          <path d="M0 40 Q 25 30, 50 40 T 100 40" stroke="white" fill="transparent" strokeWidth="2" />
+          <path d="M0 60 Q 25 50, 50 60 T 100 60" stroke="white" fill="transparent" strokeWidth="2" />
+          <path d="M0 80 Q 25 70, 50 80 T 100 80" stroke="white" fill="transparent" strokeWidth="2" />
+        </svg>
+      </div>
+      <span className="text-white font-black tracking-tighter relative z-10">CRC</span>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -116,8 +140,11 @@ const App: React.FC = () => {
   };
 
   if (loading) return (
-    <div className="h-screen bg-black flex items-center justify-center text-white font-black tracking-tighter text-6xl animate-pulse">
-      CRC SOUND
+    <div className="h-screen bg-black flex items-center justify-center flex-col">
+      <CRCLogo size="lg" />
+      <div className="text-white font-black tracking-tighter text-4xl animate-pulse mt-4">
+        CRC SOUND
+      </div>
     </div>
   );
 
@@ -171,7 +198,8 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white p-10 rounded-[2.5rem] shadow-2xl">
-        <h1 className="text-4xl font-black mb-2 tracking-tighter uppercase text-center">CRC SOUND</h1>
+        <CRCLogo size="md" />
+        <h1 className="text-3xl font-black mb-2 tracking-tighter uppercase text-center">CRC SOUND</h1>
         <p className="text-gray-400 mb-8 font-medium text-center">Enter your mobile number to begin.</p>
         <input 
           type="tel" 
@@ -183,7 +211,7 @@ const LoginPage = () => {
         />
         <button 
           onClick={handleLogin}
-          className="w-full bg-brand-black text-white p-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl"
+          className="w-full bg-black text-white p-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl"
         >
           Sign In
         </button>
@@ -232,7 +260,10 @@ const Layout = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <aside className="w-72 bg-brand-black text-white p-8 flex flex-col fixed inset-y-0 overflow-y-auto no-scrollbar transition-colors duration-500">
-        <h2 className="text-3xl font-black tracking-tighter mb-12 uppercase">CRC SOUND</h2>
+        <div className="flex items-center space-x-3 mb-10">
+          <CRCLogo size="sm" />
+          <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">CRC SOUND</h2>
+        </div>
         
         <div className="mb-6 flex items-center space-x-2 bg-white/5 p-3 rounded-xl border border-white/10">
           <div className={`w-2 h-2 rounded-full ${isLinked ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`}></div>
@@ -285,7 +316,8 @@ const Layout = () => {
   );
 };
 
-// (Rest of additional pages remain the same, simplified to keep context clear)
+// ... Rest of the pages remain unchanged ...
+
 const TrainingPage = () => (
   <div className="space-y-12">
     <h1 className="text-4xl font-black uppercase tracking-tighter">Training Modules</h1>
